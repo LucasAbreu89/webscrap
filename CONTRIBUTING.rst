@@ -15,7 +15,7 @@ Types of Contributions
 Report Bugs
 ~~~~~~~~~~~
 
-Report bugs at https://github.com/LucasAbreu89/real_state_scrap/issues.
+Report bugs at https://github.com/LucasAbreu89/realstate_scrap/issues.
 
 If you are reporting a bug, please include:
 
@@ -38,14 +38,14 @@ and "help wanted" is open to whoever wants to implement it.
 Write Documentation
 ~~~~~~~~~~~~~~~~~~~
 
-real_state_scrap could always use more documentation, whether as part of the
+realstate_scrap could always use more documentation, whether as part of the
 official real_state_scrap docs, in docstrings, or even on the web in blog posts,
 articles, and such.
 
 Submit Feedback
 ~~~~~~~~~~~~~~~
 
-The best way to send feedback is to file an issue at https://github.com/LucasAbreu89/real_state_scrap/issues.
+The best way to send feedback is to file an issue at https://github.com/LucasAbreu89/realstate_scrap/issues.
 
 If you are proposing a feature:
 
@@ -57,16 +57,16 @@ If you are proposing a feature:
 Get Started!
 ------------
 
-Ready to contribute? Here's how to set up `real_state_scrap` for local development.
+Ready to contribute? Here's how to set up `realstate_scrap` for local development.
 
-1. Fork the `real_state_scrap` repo on GitHub.
+1. Fork the `realstate_scrap` repo on GitHub.
 2. Clone your fork locally::
 
-    $ git clone git@github.com:your_name_here/real_state_scrap.git
+    $ git clone git@github.com:your_name_here/realstate_scrap.git
 
 3. Install your local copy into a virtualenv. Assuming you have virtualenvwrapper installed, this is how you set up your fork for local development::
 
-    $ mkvirtualenv real_state_scrap
+    $ mkvirtualenv realstate_scrap
     $ cd real_state_scrap/
     $ python setup.py develop
 
@@ -79,7 +79,7 @@ Ready to contribute? Here's how to set up `real_state_scrap` for local developme
 5. When you're done making changes, check that your changes pass flake8 and the
    tests, including testing other Python versions with tox::
 
-    $ flake8 real_state_scrap tests
+    $ flake8 realstate_scrap tests
     $ python setup.py test or pytest
     $ tox
 
@@ -112,7 +112,7 @@ Tips
 To run a subset of tests::
 
 
-    $ python -m unittest tests.test_real_state_scrap
+    $ python -m unittest tests.test_realstate_scrap
 
 Deploying
 ---------

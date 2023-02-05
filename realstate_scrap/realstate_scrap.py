@@ -72,8 +72,7 @@ def scrap(x, y):
                 park = match_parking.group(1)
                 parking.append(park)
 
-        total = __builtins__.list(
-            zip(preco, ender, bedrooms, area, baths, parking))
+        total = list(zip(preco, ender, bedrooms, area, baths, parking))
         unique = set(total)
 
         existing_tuples = set()
