@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
-"""Tests for `real_state_scrap` package."""
+"""Tests for `realstate_scrap` package."""
 
 
 import unittest
 
-from real_state_scrap import real_state_scrap
+from realstate_scrap1 import realstate_scrap
 
 
 class TestReal_state_scrap(unittest.TestCase):
