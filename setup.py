@@ -10,9 +10,9 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = []
+requirements = ['pandas', 'urllib3', 'bs4']
 
-test_requirements = []
+test_requirements = ['pytest']
 
 setup(
     author="Lucas Abreu",
@@ -34,7 +34,6 @@ setup(
     keywords='real_state_scrap',
     name='realstate_scrap',
     packages=find_packages(include=['realstate_scrap1', 'realstate_scrap.*']),
-    install_requires=['pandas', 'urllib.request', 'bs4', 're', 'csv'],
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/LucasAbreu89/webscrap',

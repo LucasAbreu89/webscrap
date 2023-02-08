@@ -11,6 +11,9 @@ def scrap(x, y):
     Args:
         x (int): First page to scrap
         y (int): Last page to scrap
+
+    Returns:
+        A real.csv file, including the price, number of baths, number of bedrooms, area, parking and adress of a property
     """
     url_template = "https://www.imovelweb.com.br/apartamentos-venda-belo-horizonte-mg-pagina-{}.html"
     header = ("price", "district", "bedroom", "area", "bathrooms", "parkings")
@@ -91,10 +94,8 @@ def scrap(x, y):
         with open('real.csv', 'a', encoding='utf-8', newline='') as csvfile:
             writer = csv.writer(csvfile)
             for row in unique:
-                if tuple(row) not in existing_tuples:  # teste para tirar tuples repetidas
-                    # pode deixar so esse para adicionar todas tuples
+                if tuple(row) not in existing_tuples:
                     writer.writerow(row)
-                    # teste para tirar tuples repetidas
                     existing_tuples.add(tuple(row))
 
         check = pd.read_csv("real.csv")
