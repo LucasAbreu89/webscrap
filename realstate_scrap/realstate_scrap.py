@@ -13,7 +13,7 @@ def scrap(x, y):
         y (int): Last page to scrap
 
     Returns:
-        A real.csv file, including the price, number of baths, number of bedrooms, area, parking and adress of a property
+        A real.csv file, including the price, number of bathrooms, number of bedrooms, area, parking and adress of a property
     """
     url_template = "https://www.imovelweb.com.br/apartamentos-venda-belo-horizonte-mg-pagina-{}.html"
     header = ("price", "district", "bedroom", "area", "bathrooms", "parkings")
