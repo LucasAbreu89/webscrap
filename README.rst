@@ -7,10 +7,9 @@ The program makes a scrap of the site: "https://www.imovelweb.com.br" and return
 
 Install
 --------
-
 1 - Create a folder in the place that you want. 
 2 - open git bash in this folder. 
-3 - clone my projet using: git clone https://github.com/LucasAbreu89/webscrap.git 
+3 - clone my projet using: git clone 
 4 - Open my folder in the program that you want, pycharm or vscode 
 5 - move to webscrap folder inside the folder that you create 
 6 - run in the terminal: pip install -r requirements.txt 
