@@ -15,7 +15,7 @@ Install
 
 4 - Open my folder in the program that you want, pycharm or vscode 
 
-5 - move to webscrap folder inside the folder that you create 
+5 - in the terminal, move to webscrap folder inside the folder that you create 
 
 6 - run in the terminal: pip install -r requirements.txt 
 
