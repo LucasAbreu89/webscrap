@@ -1,16 +1,5 @@
-"""The setup script."""
-
 from setuptools import setup, find_packages
-
-with open('README.rst') as readme_file:
-    readme = readme_file.read()
-
-with open('HISTORY.rst') as history_file:
-    history = history_file.read()
-
-requirements = ['pandas', 'urllib3', 'bs4']
-
-test_requirements = ['pytest']
+import os
 
 setup(
     author="Lucas Abreu",
@@ -26,15 +15,8 @@ setup(
         'Programming Language :: Python :: 3.8',
     ],
     description="extract all the data like: price, address, features from imovelweb.com.br",
-    install_requires=requirements,
-    long_description=readme + '\n\n' + history,
     include_package_data=True,
-    keywords='real_state_scrap',
-    name='realstate_scrap',
-    packages=find_packages(include=['realstate_scrap1', 'realstate_scrap.*']),
-    test_suite='tests',
-    tests_require=test_requirements,
-    url='https://github.com/LucasAbreu89/webscrap',
-    version='0.1.0',
-    zip_safe=False,
+    name='real2scrap',
+    packages=find_packages(),
+    version='0.1.1',
 )
