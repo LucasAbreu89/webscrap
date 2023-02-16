@@ -21,6 +21,8 @@ We need some packeges to be installed. Open you cmd and install the packages bel
   
   5- pip install -i https://test.pypi.org/simple/ real2scrap
   
+If you have any doubt how to install a package in python, take a look at this tutorial: https://www.datacamp.com/tutorial/pip-python-package-manager
+  
 The package is still in testpypi until it passes your approval
 
 After you install all this packages, open you jupyter notebook and do like the image below:
