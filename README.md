@@ -17,7 +17,7 @@ We need some packages to be installed. Open you cmd and install the packages bel
   
   4- pip install numpy
   
-  #and finally
+  **and finally**
   
   5- pip install -i https://test.pypi.org/simple/ real2scrap
   
