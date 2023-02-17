@@ -7,7 +7,7 @@ The program makes a scrap of the site: "https://www.imovelweb.com.br" and return
 
 ## Install
 
-We need some packeges to be installed. Open you cmd and install the packages bellow:
+We need some packages to be installed. Open you cmd and install the packages bellow:
 
   1- pip install pandas
   
