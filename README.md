@@ -5,7 +5,7 @@ It`s a program that has a webScrap function that takes two arguments (x= first p
 The program makes a scrap of the site: "https://www.imovelweb.com.br" and returns a csv file with some characteristics of the property in the chosen region.
 
 
-## Install
+## Install - method 1
 
 We need some packages to be installed. Open you cmd and install the packages bellow:
 
@@ -34,6 +34,26 @@ After you run the program and got the msg : "Time to look at your csv file" you 
 ![image](https://user-images.githubusercontent.com/123965126/219512754-6b2a9411-5005-4f91-8f97-1b2a3d937530.png)
 
 note: To make the scrap of each page the program takes approximately 30 sec
+
+## Install - method 2
+
+1 - Create a folder in the place that you want.
+
+2 - open git bash in this folder.
+
+3 - clone my projet using: git clone
+
+4 - Open my folder in the program that you want, pycharm or vscode
+
+5 - in the terminal, move to webscrap folder inside the folder that you create
+
+6 - run in the terminal: pip install -r requirements.txt
+
+7 - create a python file inside the webscrap folder
+
+8 - make the package import : from real2scrap.realstate_scrap import scrap
+
+9 - run the function scrap() with tha parameters that you want!
 
 
 
