@@ -6,6 +6,18 @@ The program makes a scrap of the site: "https://www.imovelweb.com.br" and return
 
 ## Install - method 1
 
+pip install pandas
+
+pip install numpy
+
+pip install supabase
+
+pip install python-dotenv
+
+pip install selenium
+
+pip install webdriver
+
 pip install -i https://test.pypi.org/simple/ real2scrap
 
 and run the function
