@@ -32,7 +32,7 @@ and run the function ```scrap()```
 
 2 - open git bash in this folder.
 
-3 - clone my projet using: ```git clone```
+3 - clone my projet using: ```git clone https://github.com/LucasAbreu89/webscrap.git```
 
 4 - Open my folder in the program that you want, pycharm or vscode
 
