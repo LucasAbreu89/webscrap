@@ -8,21 +8,21 @@ The program makes a scrap of the site: "https://www.imovelweb.com.br" and return
 
 ```pip install pandas```
 
-pip install numpy
+```pip install numpy```
 
-pip install supabase
+```pip install supabase```
 
-pip install python-dotenv
+```pip install python-dotenv```
 
-pip install selenium
+```pip install selenium```
 
-pip install webdriver
+```pip install webdriver```
 
-pip install -i https://test.pypi.org/simple/ real2scrap
+```pip install -i https://test.pypi.org/simple/ real2scrap```
 
 and run the function
 
-Scrap()
+```scrap()```
 
 
 ## Install - method 2
@@ -31,19 +31,19 @@ Scrap()
 
 2 - open git bash in this folder.
 
-3 - clone my projet using: git clone
+3 - clone my projet using: ```git clone```
 
 4 - Open my folder in the program that you want, pycharm or vscode
 
 5 - in the terminal, move to webscrap folder inside the folder that you create
 
-6 - run in the terminal: pip install -r requirements.txt
+6 - run in the terminal: ```pip install -r requirements.txt```
 
 7 - create a python file inside the webscrap folder
 
-8 - make the package import : from real2scrap.realstate_scrap import scrap
+8 - make the package import : ```from real2scrap.realstate_scrap import scrap```
 
-9 - run the function scrap() with tha parameters that you want!
+9 - run the function ```scrap()``` with tha parameters that you want!
 
 
 
