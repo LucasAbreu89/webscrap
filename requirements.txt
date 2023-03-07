@@ -3,6 +3,8 @@ beautifulsoup4==4.11.2
 urllib3==1.26.14
 selenium==4.7.2
 webdriver_manager==3.8.5
+supabase
+python-dotenv
 
 
 
