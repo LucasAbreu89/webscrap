@@ -10,7 +10,7 @@ pip install -i https://test.pypi.org/simple/ real2scrap
 
 and run the function
 
-Scra()
+Scrap()
 
 
 ## Install - method 2
