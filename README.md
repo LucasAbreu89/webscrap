@@ -4,8 +4,16 @@ It`s a program that has a webScrap function that takes two arguments (x= first p
 
 The program makes a scrap of the site: "https://www.imovelweb.com.br" and returns a csv file with some characteristics of the property in the chosen region.
 
+## Install - method 1
 
-## Install 
+pip install -i https://test.pypi.org/simple/ real2scrap
+
+and run the function
+
+Scra()
+
+
+## Install - method 2
 
 1 - Create a folder in the place that you want.
 
