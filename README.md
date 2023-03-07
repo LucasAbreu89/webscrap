@@ -20,9 +20,9 @@ The program makes a scrap of the site: "https://www.imovelweb.com.br" and return
 
 ```pip install -i https://test.pypi.org/simple/ real2scrap```
 
-and run the function
+make the import:```from real2scrap.realstate_scrap import scrap```
 
-```scrap()```
+and run the function ```scrap()```
 
 
 ## Install - method 2
