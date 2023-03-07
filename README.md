@@ -6,7 +6,7 @@ The program makes a scrap of the site: "https://www.imovelweb.com.br" and return
 
 ## Install - method 1
 
-pip install pandas
+```pip install pandas```
 
 pip install numpy
 
