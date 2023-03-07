@@ -42,7 +42,7 @@ The program makes a scrap of the site: "https://www.imovelweb.com.br" and return
 
 ```pip install -i https://test.pypi.org/simple/ real2scrap```
 
-make the import:```from real2scrap.realstate_scrap import scrap```
+make the import:```from real2scrap import scrap```
 
 and run the function ```scrap()```
 
