@@ -1,5 +1,3 @@
-
-
 def scrap(x, y=None):
     """A function that scrapes a website called imovelweb and returns a csv file with some property characteristics.
 
@@ -9,7 +7,7 @@ def scrap(x, y=None):
                            If specified, pages x to y-1 will be scraped.
 
     Returns:
-        A real.csv file, including some property characteristics.
+        A csv file and feeds a database in supabase.
     """
 
     from selenium import webdriver
@@ -39,7 +37,14 @@ def scrap(x, y=None):
         page_range = range(x, y)
 
     url_template = "https://www.imovelweb.com.br/apartamentos-venda-belo-horizonte-mg-pagina-{}.html"
+
+    url_list = [url_template.format(page) for page in page_range]
+
     base_url = "https://www.imovelweb.com.br"
+
+    # Get the current datetime in UTC
+    date1 = (datetime.utcnow() - timedelta(hours=3)
+             ).strftime("%Y-%m-%dT%H:%M:%S")
 
     # Create a new Options object for configuring the Chrome driver
     option = Options()
@@ -117,8 +122,8 @@ def scrap(x, y=None):
                     if 'quartos' in x else None for x in ban1]
         baths = [re.search(r'(\d+)\sban', x).group(1)
                  if 'ban' in x else None for x in ban1]
-        parking = [re.search(r'(\d+)\svagas', x).group(1)
-                   if 'vagas' in x else None for x in ban1]
+        parking = [int(re.search(r'(\d+)\svagas', x).group(1))
+                   if 'vagas' in x else 0 for x in ban1]
         src_list = [img.get_attribute('src') if img.get_attribute(
             'src') else None for img in imgResults]
         full_links = [
@@ -155,42 +160,71 @@ def scrap(x, y=None):
         check.drop_duplicates(inplace=True)
         check["price(R$)"] = check["price(R$)"].astype(float)
         check["area(m²)"] = check["area(m²)"].astype(float)
+        check['parkings'] = check['parkings'].astype('Int64')
 
         check.to_csv('real.csv', index=False)
         driver.quit()
 
     load_dotenv()
-    try:
-        url = os.environ.get("SUPABASE_URL")
-        key = os.environ.get("SUPABASE_KEY")
-        supabase = create_client(url, key)
-    except:
-        url = "https://vsdjziudywkfypkfqhmc.supabase.co"
-        key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZzZGp6aXVkeXdrZnlwa2ZxaG1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NzgxMzAxNDgsImV4cCI6MTk5MzcwNjE0OH0.3NiTn0S3uvn1kkLf7NTOjqKEaDLzkVj-QvWIuIB5C0A"
-        supabase = create_client(url, key)
 
-    check = pd.read_csv("real.csv")
+    url = os.environ.get("SUPABASE_URL")
+    key = os.environ.get("SUPABASE_KEY")
+    supabase = create_client(url, key)
 
-    for index, row in check.iterrows():
-        values = {
-            "price(R$)": row["price(R$)"],
-            "condo(R$)": row["condo(R$)"],
-            "district": row["district"],
-            "address": row["address"],
-            "area(m²)": row["area(m²)"],
-            "bedroom": row["bedroom"],
-            "bathrooms": row["bathrooms"],
-            "parkings": row["parkings"],
-            "url(image)": row["url(image)"],
-            "url(apt)": row["url(apt)"],
-            "created_at": (datetime.utcnow() - timedelta(hours=3)).strftime("%Y-%m-%dT%H:%M:%S")
-        }
-        for key, value in values.items():
-            if pd.isna(value):
-                values[key] = None
+    check1 = pd.read_csv("real.csv")
 
-        # Insert values into Supabase table
-        res = supabase.table("teste").insert(values).execute()
-        print(f"Row {index} inserted successfully")
+    # Get existing IDs in the table
+    existing_ids = supabase.table("teste").select("id").execute().data
 
-    print("Time to look at your csv file")
+    # Convert the IDs to a set for efficient membership testing
+    existing_ids = set([row["id"] for row in existing_ids])
+
+    new_rows_added = 0
+
+    for index, row in check1.iterrows():
+        if index not in existing_ids:
+            values = {
+                "id": index,
+                "price(R$)": row["price(R$)"],
+                "condo(R$)": row["condo(R$)"],
+                "district": row["district"],
+                "address": row["address"],
+                "area(m²)": row["area(m²)"],
+                "bedroom": row["bedroom"],
+                "bathrooms": row["bathrooms"],
+                "parkings": row["parkings"],
+                "url(image)": row["url(image)"],
+                "url(apt)": row["url(apt)"],
+                "created_at": date1
+            }
+            for key, value in values.items():
+                if pd.isna(value):
+                    values[key] = None
+
+            # Insert values into Supabase table
+            try:
+                res = supabase.table("teste").insert(values).execute()
+                new_rows_added += 1
+                print(f"Row {index} inserted successfully")
+            except Exception as e:
+                supabase.table("entrys").insert(
+                    {"error": str(e), "status": "failed"}).execute()
+                print(f"Error inserting row {index}: {e}")
+
+    if new_rows_added > 0:
+        print(f"{new_rows_added} rows added to 'teste' table")
+        # Get the current datetime in UTC
+        date2 = (datetime.utcnow() - timedelta(hours=3)
+                 ).strftime("%Y-%m-%dT%H:%M:%S")
+        try:
+            # Insert the number of new rows added into the 'entrys' table
+            supabase.table("entrys").insert(
+                {"error": None, "prop_scrap": new_rows_added, "created_at": date1, "status": "complete", "completed_at": date2, "pages": url_list}).execute()
+        except Exception as e:
+            # Insert the error message into the table
+            supabase.table("entrys").insert(
+                {"error": str(e), "status": "failed"}).execute()
+    else:
+        print("There is nothing to add")
+
+    print("Time to look at your csv file and supabase!!!")
