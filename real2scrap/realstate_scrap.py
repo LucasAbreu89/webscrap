@@ -28,9 +28,9 @@ def scrap(x, y=None):
 
     load_dotenv()
 
-    url = os.environ.get("SUPABASE_URL")
-    key = os.environ.get("SUPABASE_KEY")
-    supabase = create_client(url, key)
+    url_supa = os.environ.get("SUPABASE_URL")
+    key_supa = os.environ.get("SUPABASE_KEY")
+    supabase = create_client(url_supa, key_supa)
 
     if x == 0:
         raise ValueError("The value of x cannot be zero.")
@@ -202,7 +202,7 @@ def scrap(x, y=None):
                     values[key] = None
 
             try:
-                res = supabase.table("teste").upsert(values).execute()
+                res = supabase.table("teste").insert(values).execute()
                 new_rows_added += 1
                 print(f"Row {index} inserted successfully")
             except Exception as e:
