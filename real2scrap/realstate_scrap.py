@@ -26,6 +26,12 @@ def scrap(x, y=None):
     import os
     from dotenv import load_dotenv
 
+    load_dotenv()
+
+    url = os.environ.get("SUPABASE_URL")
+    key = os.environ.get("SUPABASE_KEY")
+    supabase = create_client(url, key)
+
     if x == 0:
         raise ValueError("The value of x cannot be zero.")
 
@@ -88,54 +94,54 @@ def scrap(x, y=None):
             time.sleep(0.5)
 
         # finding the elements
-        imgResults = driver.find_elements(
+        scrap_img = driver.find_elements(
             By.CSS_SELECTOR, '[data-qa="posting PROPERTY"] .flickity-slider img:first-child')
-        item_end = driver.find_elements(
+        scrap_location = driver.find_elements(
             By.CSS_SELECTOR, '[data-qa="posting PROPERTY"] [data-qa="POSTING_CARD_LOCATION"]')
-        item_add = driver.find_elements(By.CLASS_NAME, 'sc-ge2uzh-0')
-        item_ban = driver.find_elements(
+        scrap_location2 = driver.find_elements(By.CLASS_NAME, 'sc-ge2uzh-0')
+        scrap_features = driver.find_elements(
             By.CSS_SELECTOR, '[data-qa="posting PROPERTY"] [data-qa="POSTING_CARD_FEATURES"]')
-        item_cond = driver.find_elements(By.CLASS_NAME, 'sc-12dh9kl-0')
-        link = driver.find_elements(
+        scrap_condo = driver.find_elements(By.CLASS_NAME, 'sc-12dh9kl-0')
+        scrap_link = driver.find_elements(
             By.CSS_SELECTOR, '[data-qa="posting PROPERTY"]')
 
         # cleaning / organizing lists
-        add = [str(element.text) for element in item_add]
-        ban1 = [element.text for element in item_ban]
-        ban1 = [element.replace("\n", " ") for element in ban1]
-        cond1 = [str(element.text) for element in item_cond]
-        cond1 = [x.replace("\n", " ").replace("R$", "").replace(
-            "Condominio", "").replace(".", "").strip() for x in cond1]
+        address = [str(element.text) for element in scrap_location2]
+        features1 = [element.text for element in scrap_features]
+        features1 = [element.replace("\n", " ") for element in features1]
+        condo1 = [str(element.text) for element in scrap_condo]
+        condo1 = [x.replace("\n", " ").replace("R$", "").replace(
+            "Condominio", "").replace(".", "").strip() for x in condo1]
 
         # creating a list of each element we want to extract
-        prices = [int(row.split()[0]) if len(row.split())
-                  >= 1 else None for row in cond1]
-        condos = [int(row.split()[1]) if len(row.split())
-                  == 2 else None for row in cond1]
-        ender = [str(element.text.split(",")[0])
-                 if element.text else None for element in item_end]
-        add1 = [x.split(',')[0] if ',' in x and len(x.split(','))
-                >= 2 else x if x else None for x in add]
-        area = [x.split('m²')[1].strip().split()[0]
-                if 'm²' in x else None for x in ban1]
-        bedrooms = [re.search(r'(\d+) quartos', x).group(1)
-                    if 'quartos' in x else None for x in ban1]
-        baths = [re.search(r'(\d+)\sban', x).group(1)
-                 if 'ban' in x else None for x in ban1]
-        parking = [int(re.search(r'(\d+)\svagas', x).group(1))
-                   if 'vagas' in x else 0 for x in ban1]
+        prices_brl = [int(row.split()[0]) if len(row.split())
+                      >= 1 else None for row in condo1]
+        condos_brl = [int(row.split()[1]) if len(row.split())
+                      == 2 else None for row in condo1]
+        district_list = [str(element.text.split(",")[0])
+                         if element.text else None for element in scrap_location]
+        address_list = [x.split(',')[0] if ',' in x and len(x.split(','))
+                        >= 2 else x if x else None for x in address]
+        area_list = [x.split('m²')[1].strip().split()[0]
+                     if 'm²' in x else None for x in features1]
+        bedrooms_list = [re.search(r'(\d+) quartos', x).group(1)
+                         if 'quartos' in x else None for x in features1]
+        baths_list = [re.search(r'(\d+)\sban', x).group(1)
+                      if 'ban' in x else None for x in features1]
+        parking_list = [int(re.search(r'(\d+)\svagas', x).group(1))
+                        if 'vagas' in x else 0 for x in features1]
         src_list = [img.get_attribute('src') if img.get_attribute(
-            'src') else None for img in imgResults]
+            'src') else None for img in scrap_img]
         full_links = [
-            base_url + element.get_attribute("data-to-posting") for element in link]
+            base_url + element.get_attribute("data-to-posting") for element in scrap_link]
 
         # creating a header for my list
         header = ("price(R$)", "condo(R$)", "district", "address", "area(m²)",
                   "bedroom", "bathrooms", "parkings", "url(image)", "url(apt)")
 
         # creating a list of tuples
-        total = list(zip(prices, condos, ender, add1, area,
-                     bedrooms, baths, parking, src_list, full_links))
+        total = list(zip(prices_brl, condos_brl, district_list, address_list, area_list,
+                     bedrooms_list, baths_list, parking_list, src_list, full_links))
 
         # create a list with my header
         result = [header] + total
@@ -157,19 +163,13 @@ def scrap(x, y=None):
 
         check = pd.read_csv("real.csv")
 
-        check.drop_duplicates(inplace=True)
+        # check.drop_duplicates(inplace=True)
         check["price(R$)"] = check["price(R$)"].astype(float)
         check["area(m²)"] = check["area(m²)"].astype(float)
         check['parkings'] = check['parkings'].astype('Int64')
 
         check.to_csv('real.csv', index=False)
         driver.quit()
-
-    load_dotenv()
-
-    url = os.environ.get("SUPABASE_URL")
-    key = os.environ.get("SUPABASE_KEY")
-    supabase = create_client(url, key)
 
     check1 = pd.read_csv("real.csv")
 
@@ -201,9 +201,8 @@ def scrap(x, y=None):
                 if pd.isna(value):
                     values[key] = None
 
-            # Insert values into Supabase table
             try:
-                res = supabase.table("teste").insert(values).execute()
+                res = supabase.table("teste").upsert(values).execute()
                 new_rows_added += 1
                 print(f"Row {index} inserted successfully")
             except Exception as e:
@@ -213,7 +212,6 @@ def scrap(x, y=None):
 
     if new_rows_added > 0:
         print(f"{new_rows_added} rows added to 'teste' table")
-        # Get the current datetime in UTC
         date2 = (datetime.utcnow() - timedelta(hours=3)
                  ).strftime("%Y-%m-%dT%H:%M:%S")
         try:
