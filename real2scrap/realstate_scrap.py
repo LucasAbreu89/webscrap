@@ -129,8 +129,9 @@ def scrap(x, y=None, url_type="normal"):
                          if element.text else None for element in scrap_location]
         address_list = [x.split(',')[0] if ',' in x and len(x.split(','))
                         >= 2 else x if x else None for x in address]
-        area_list = [x.split('m²')[1].strip().split()[0]
-                     if 'm²' in x else None for x in features1]
+        area_list = [x.split('m²')[1].strip() if x.count('m²') > 1 else (
+            x.split('m²')[0] + 'm²' if 'm²' in x else np.nan) for x in features1]
+        area_list = [x.split()[0].replace('m²', '').strip() for x in area_list]
         bedrooms_list = [re.search(r'(\d+) quartos', x).group(1)
                          if 'quartos' in x else None for x in features1]
         baths_list = [re.search(r'(\d+)\sban', x).group(1)
