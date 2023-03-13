@@ -18,5 +18,5 @@ setup(
     include_package_data=True,
     name='real2scrap',
     packages=find_packages(),
-    version='0.1.6',
+    version='0.1.7',
 )
