@@ -1,10 +1,11 @@
-def scrap(x, y=None):
+def scrap(x, y=None, url_type="normal"):
     """A function that scrapes a website called imovelweb and returns a csv file with some property characteristics.
 
     Args:
         x (int): First page to scrape. If y is not specified, this argument is treated as a single page input.
         y (int, optional): Last page to scrape (not included in the range of pages to scrape).
                            If specified, pages x to y-1 will be scraped.
+        url_type (str, optional): Type of URL template to use. "normal" for normal URL or "last-day" for last day URL.
 
     Returns:
         A csv file and feeds a database in supabase.
@@ -42,7 +43,12 @@ def scrap(x, y=None):
         # Multiple pages input
         page_range = range(x, y)
 
-    url_template = "https://www.imovelweb.com.br/apartamentos-venda-belo-horizonte-mg-pagina-{}.html"
+    if url_type == "normal":
+        url_template = "https://www.imovelweb.com.br/apartamentos-venda-belo-horizonte-mg-pagina-{}.html"
+    elif url_type == "last-day":
+        url_template = "https://www.imovelweb.com.br/apartamentos-venda-belo-horizonte-mg-publicado-no-ultimo-dia-pagina-{}.html"
+    else:
+        raise ValueError("Invalid url_type. Must be 'normal' or 'last-day'.")
 
     url_list = [url_template.format(page) for page in page_range]
 
@@ -84,6 +90,7 @@ def scrap(x, y=None):
     servico = Service(ChromeDriverManager().install())
 
     for page_num in page_range:
+        start_time = time.time()
         url = url_template.format(page_num)
         driver = webdriver.Chrome(service=servico, options=option)
         driver.get(url)
@@ -114,10 +121,10 @@ def scrap(x, y=None):
             "Condominio", "").replace(".", "").strip() for x in condo1]
 
         # creating a list of each element we want to extract
-        prices_brl = [int(row.split()[0]) if len(row.split())
-                      >= 1 else None for row in condo1]
-        condos_brl = [int(row.split()[1]) if len(row.split())
-                      == 2 else None for row in condo1]
+        prices_brl = [int(row.split()[0]) if len(row.split()) >= 1 and row.split()[
+            0].isdigit() else None for row in condo1]
+        condos_brl = [int(row.split()[1]) if len(row.split()) == 2 and row.split()[
+            1].isdigit() else None for row in condo1]
         district_list = [str(element.text.split(",")[0])
                          if element.text else None for element in scrap_location]
         address_list = [x.split(',')[0] if ',' in x and len(x.split(','))
@@ -143,8 +150,13 @@ def scrap(x, y=None):
         total = list(zip(prices_brl, condos_brl, district_list, address_list, area_list,
                      bedrooms_list, baths_list, parking_list, src_list, full_links))
 
-        # create a list with my header
-        result = [header] + total
+        unique_total = []
+        # iterate over each tuple in the total list
+        for row in total:
+            # check if the row is already in the unique_total list
+            if row not in unique_total:
+                # if not, append the row to the unique_total list
+                unique_total.append(row)
 
         # Define the path to the CSV file
         file_path = 'real.csv'
@@ -158,7 +170,7 @@ def scrap(x, y=None):
         # Write the new tuples to the CSV file
         with open(file_path, 'a', newline='', encoding='utf-8') as csvfile:
             writer = csv.writer(csvfile)
-            for row in total:
+            for row in unique_total:
                 writer.writerow(row)
 
         check = pd.read_csv("real.csv")
@@ -169,12 +181,17 @@ def scrap(x, y=None):
         check['parkings'] = check['parkings'].astype('Int64')
 
         check.to_csv('real.csv', index=False)
+
+        end_time = time.time()
+        diference_time = end_time - start_time
+
+        print(f"page {page_num} was scraped in {round(diference_time)} seconds")
         driver.quit()
 
     check1 = pd.read_csv("real.csv")
 
     # Get existing IDs in the table
-    existing_ids = supabase.table("teste").select("id").execute().data
+    existing_ids = supabase.table("data_scrap").select("id").execute().data
 
     # Convert the IDs to a set for efficient membership testing
     existing_ids = set([row["id"] for row in existing_ids])
@@ -202,25 +219,25 @@ def scrap(x, y=None):
                     values[key] = None
 
             try:
-                res = supabase.table("teste").insert(values).execute()
+                res = supabase.table("data_scrap").upsert(values).execute()
                 new_rows_added += 1
                 print(f"Row {index} inserted successfully")
             except Exception as e:
-                supabase.table("entrys").insert(
+                supabase.table("entradas").upsert(
                     {"error": str(e), "status": "failed"}).execute()
                 print(f"Error inserting row {index}: {e}")
 
     if new_rows_added > 0:
-        print(f"{new_rows_added} rows added to 'teste' table")
+        print(f"{new_rows_added} rows added to 'data_scrap' table")
         date2 = (datetime.utcnow() - timedelta(hours=3)
                  ).strftime("%Y-%m-%dT%H:%M:%S")
         try:
-            # Insert the number of new rows added into the 'entrys' table
-            supabase.table("entrys").insert(
+            # Insert the number of new rows added into the 'entrada' table
+            supabase.table("entradas").upsert(
                 {"error": None, "prop_scrap": new_rows_added, "created_at": date1, "status": "complete", "completed_at": date2, "pages": url_list}).execute()
         except Exception as e:
             # Insert the error message into the table
-            supabase.table("entrys").insert(
+            supabase.table("entradas").upsert(
                 {"error": str(e), "status": "failed"}).execute()
     else:
         print("There is nothing to add")
