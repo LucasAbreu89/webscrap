@@ -18,7 +18,7 @@ The program makes a scrap of the site: "https://www.imovelweb.com.br" and return
 
 `pip install webdriver`
 
-`pip install -i https://test.pypi.org/simple/ real2scrap`
+`pip install -i https://test.pypi.org/simple/ real1scrap`
 
 make the import:`from real2scrap import scrap`
 
