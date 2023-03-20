@@ -3,7 +3,7 @@ import os
 
 setup(
     author="Lucas Abreu",
-    author_email='lucasabreu@me.com',
+    author_email='lag.programmer@gmail.com',
     python_requires='>=3.6',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
@@ -18,5 +18,5 @@ setup(
     include_package_data=True,
     name='real2scrap',
     packages=find_packages(),
-    version='0.2.0',
+    version='0.2.1',
 )

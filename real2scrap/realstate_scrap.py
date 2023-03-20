@@ -25,7 +25,9 @@ def scrap(x, y=None, url_type="normal"):
     import time
     import json
     import os
+    from unidecode import unidecode
     from dotenv import load_dotenv
+    from rapidfuzz import fuzz
 
     load_dotenv()
 
@@ -95,10 +97,10 @@ def scrap(x, y=None, url_type="normal"):
         driver = webdriver.Chrome(service=servico, options=option)
         driver.get(url)
 
-        time.sleep(6)
-        for i in range(17):
-            driver.execute_script("window.scrollBy(0, 350)")
-            time.sleep(0.5)
+        time.sleep(5)
+        for i in range(16):
+            driver.execute_script("window.scrollBy(0, 550)")
+            time.sleep(0.4)
 
         # finding the elements
         scrap_img = driver.find_elements(
@@ -129,9 +131,10 @@ def scrap(x, y=None, url_type="normal"):
                          if element.text else None for element in scrap_location]
         address_list = [x.split(',')[0] if ',' in x and len(x.split(','))
                         >= 2 else x if x else None for x in address]
-        area_list = [x.split('m²')[1].strip() if x.count('m²') > 1 else (
-            x.split('m²')[0] + 'm²' if 'm²' in x else np.nan) for x in features1]
-        area_list = [x.split()[0].replace('m²', '').strip() for x in area_list]
+        area_list = [x.split('m²')[1].strip() if x.count('m²') > 1 and isinstance(x, str) else
+                     (x.split('m²')[0] + 'm²' if 'm²' in x and isinstance(x, str) else np.nan) for x in features1]
+        area_list = [x.split()[0].replace('m²', '').strip()
+                     if isinstance(x, str) else np.nan for x in area_list]
         bedrooms_list = [re.search(r'(\d+) quartos', x).group(1)
                          if 'quartos' in x else None for x in features1]
         baths_list = [re.search(r'(\d+)\sban', x).group(1)
@@ -191,6 +194,27 @@ def scrap(x, y=None, url_type="normal"):
 
     check1 = pd.read_csv("real.csv")
 
+    check1['district'] = check1['district'].apply(lambda x: unidecode(x))
+    check1['district'] = check1['district'].str.title()
+    check1['district'] = check1['district'].apply(
+        lambda x: re.sub(r'\([^)]*\)', '', x).strip())
+    check1['district'] = check1['district'].str.replace("ç", "c")
+    bairro_categorizado = pd.read_excel("Categoria_bairros.xlsx", index_col=0)
+    my_dict = bairro_categorizado.to_dict()['regional']
+
+    for key, value in my_dict.items():
+        mask = check1['district'] == key
+        if mask.any():
+            check1.loc[mask, 'regional'] = value
+        else:
+            # find the closest match to the key
+            ratios = [(fuzz.ratio(key, district), district)
+                      for district in check1['district']]
+            closest_match = max(ratios, key=lambda x: x[0:1])[0]
+            # set the value in the 'regional' column for the closest match
+            mask = check1['district'] == closest_match
+            check1.loc[mask, 'regional'] = value
+
     # Get existing IDs in the table
     existing_ids = supabase.table("data_scrap").select("id").execute().data
 
@@ -213,7 +237,8 @@ def scrap(x, y=None, url_type="normal"):
                 "parkings": row["parkings"],
                 "url(image)": row["url(image)"],
                 "url(apt)": row["url(apt)"],
-                "created_at": date1
+                "created_at": date1,
+                "regional": row["regional"]
             }
             for key, value in values.items():
                 if pd.isna(value):
