@@ -43,3 +43,7 @@ and run the function `scrap()`
 8 - make the package import : `from real2scrap.realstate_scrap import scrap`
 
 9 - run the function `scrap()` with tha parameters that you want!
+
+## IMPORTANT OBSERVATION:
+
+Download the file Categoria_bairros.xlsx and put it in the folder that you are runing the project.
