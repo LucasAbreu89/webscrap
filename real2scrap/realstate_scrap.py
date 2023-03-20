@@ -146,13 +146,40 @@ def scrap(x, y=None, url_type="normal"):
         full_links = [
             base_url + element.get_attribute("data-to-posting") for element in scrap_link]
 
+        # cleaning district
+        district_list = [unidecode(x) for x in district_list]
+        district_list = [x.title() for x in district_list]
+        district_list = [re.sub(r'\([^)]*\)', '', x).strip()
+                         for x in district_list]
+        district_list = [x.replace("ç", "c") for x in district_list]
+
+        # creating Regional
+        regional = []
+
+        # Loop over the district_list
+        bairro_categorizado = pd.read_excel(
+            "Categoria_bairros.xlsx", index_col=0)
+        my_dict = bairro_categorizado.to_dict()['regional']
+
+        for district in district_list:
+            # Check if the district is in my_dict
+            if district in my_dict:
+                regional.append(my_dict[district])
+            else:
+                # find the closest match to the district in my_dict
+                ratios = [(fuzz.ratio(district, key), key)
+                          for key in my_dict.keys()]
+                closest_match = max(ratios, key=lambda x: x[0])[1]
+                # add the value for the closest match to the regional list
+                regional.append(my_dict[closest_match])
+
         # creating a header for my list
         header = ("price(R$)", "condo(R$)", "district", "address", "area(m²)",
-                  "bedroom", "bathrooms", "parkings", "url(image)", "url(apt)")
+                  "bedroom", "bathrooms", "parkings", "url(image)", "url(apt)", "regional")
 
         # creating a list of tuples
         total = list(zip(prices_brl, condos_brl, district_list, address_list, area_list,
-                     bedrooms_list, baths_list, parking_list, src_list, full_links))
+                     bedrooms_list, baths_list, parking_list, src_list, full_links, regional))
 
         unique_total = []
         # iterate over each tuple in the total list
@@ -170,7 +197,7 @@ def scrap(x, y=None, url_type="normal"):
             with open(file_path, 'w', newline='', encoding='utf-8') as csvfile:
                 writer = csv.writer(csvfile)
                 writer.writerow(header)
-
+                
         # Write the new tuples to the CSV file
         with open(file_path, 'a', newline='', encoding='utf-8') as csvfile:
             writer = csv.writer(csvfile)
@@ -193,27 +220,6 @@ def scrap(x, y=None, url_type="normal"):
         driver.quit()
 
     check1 = pd.read_csv("real.csv")
-
-    check1['district'] = check1['district'].apply(lambda x: unidecode(x))
-    check1['district'] = check1['district'].str.title()
-    check1['district'] = check1['district'].apply(
-        lambda x: re.sub(r'\([^)]*\)', '', x).strip())
-    check1['district'] = check1['district'].str.replace("ç", "c")
-    bairro_categorizado = pd.read_excel("Categoria_bairros.xlsx", index_col=0)
-    my_dict = bairro_categorizado.to_dict()['regional']
-
-    for key, value in my_dict.items():
-        mask = check1['district'] == key
-        if mask.any():
-            check1.loc[mask, 'regional'] = value
-        else:
-            # find the closest match to the key
-            ratios = [(fuzz.ratio(key, district), district)
-                      for district in check1['district']]
-            closest_match = max(ratios, key=lambda x: x[0:1])[0]
-            # set the value in the 'regional' column for the closest match
-            mask = check1['district'] == closest_match
-            check1.loc[mask, 'regional'] = value
 
     # Get existing IDs in the table
     existing_ids = supabase.table("data_scrap").select("id").execute().data
