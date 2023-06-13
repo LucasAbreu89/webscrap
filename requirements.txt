@@ -8,5 +8,5 @@ python-dotenv
 unidecode
 openpyxl
 rapidfuzz
-
+googlemaps
 

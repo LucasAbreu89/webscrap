@@ -1,49 +1,42 @@
-## real2scrap
+# Imovelweb Scraper
 
-It`s a program that has a webScrap function that takes two arguments (x= first page and y= final page).
+This script scrapes data from the real estate website imovelweb.com.br. It specifically targets properties listed for sale in Belo Horizonte, Brazil. The script generates a csv file containing details about the properties and feeds the data into a Supabase database.
 
-The program makes a scrap of the site: "https://www.imovelweb.com.br" and returns a csv file with some characteristics of the property in the chosen region and feeds a database in supabase.com
+## Functionality
 
-## Install - method 1
+The script is built around the main function `scrap_buy(x, y=None, url_type="normal")`.
 
-`pip install pandas`
+### Parameters:
 
-`pip install numpy`
+- `x (int)`: First page to scrape. If `y` is not specified, this argument is treated as a single page input.
+- `y (int, optional)`: Last page to scrape (not included in the range of pages to scrape). If specified, pages `x` to `y-1` will be scraped.
+- `url_type (str, optional)`: Type of URL template to use. "normal" for normal URL or "last-day" for last day URL.
 
-`pip install supabase`
+### Returns:
 
-`pip install python-dotenv`
+The function returns a csv file and feeds a database in Supabase.
 
-`pip install selenium`
+## Requirements
 
-`pip install webdriver`
+To run the script, you need the following Python packages:
 
-`pip install -i https://test.pypi.org/simple/ real1scrap`
+- selenium
+- supabase
+- numpy
+- pandas
+- re (regex)
+- googlemaps
+- time
+- os
+- unidecode
+- dotenv
+- rapidfuzz
+- warnings
 
-make the import:`from real2scrap import scrap`
+`pip install -r requirements.txt`
 
-and run the function `scrap()`
+Additionally, you need to have valid API keys for Google Maps and Supabase, which should be stored as environment variables.
 
-## Install - method 2
+## Running the script
 
-1 - Create a folder in the place that you want.
-
-2 - open git bash in this folder.
-
-3 - clone my projet using: `git clone https://github.com/LucasAbreu89/webscrap.git`
-
-4 - Open my folder in the program that you want, pycharm or vscode
-
-5 - in the terminal, move to webscrap folder inside the folder that you create
-
-6 - run in the terminal: `pip install -r requirements.txt`
-
-7 - create a python file inside the webscrap folder
-
-8 - make the package import : `from real2scrap.realstate_scrap import scrap`
-
-9 - run the function `scrap()` with tha parameters that you want!
-
-## IMPORTANT OBSERVATION:
-
-Download the file Categoria_bairros.xlsx and put it in the folder that you are runing the project.
+Simply import the function from the Python script and call it with your desired parameters.

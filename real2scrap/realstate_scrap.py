@@ -291,7 +291,7 @@ def scrap_buy(x, y=None, url_type="normal"):
     else:
         print("There is nothing to add")
 
-    print("Time to look at your csv file and supabase!!!")
+    print("Time to look at your supabase!!!")
 
 
 def scrap_rent(x, y=None, url_type="normal"):
@@ -304,7 +304,7 @@ def scrap_rent(x, y=None, url_type="normal"):
         url_type (str, optional): Type of URL template to use. "normal" for normal URL or "last-day" for last day URL.
 
     Returns:
-        A csv file and feeds a database in supabase.
+        Feeds a database in supabase.
     """
 
     from selenium import webdriver
@@ -587,4 +587,4 @@ def scrap_rent(x, y=None, url_type="normal"):
     else:
         print("There is nothing to add")
 
-    print("Time to look at your csv file and supabase!!!")
+    print("Time to look at your supabase!!!")
